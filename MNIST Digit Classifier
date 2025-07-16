@@ -1,0 +1,35 @@
+# MNIST Sınıflandırıcı
+import tensorflow as tf
+from tensorflow.keras import layers, models
+import matplotlib.pyplot as plt
+
+# Veri yükle
+(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+
+# Normalize et
+x_train = x_train / 255.0
+x_test = x_test / 255.0
+
+# Model oluştur
+model = models.Sequential([
+    layers.Flatten(input_shape=(28, 28)),
+    layers.Dense(128, activation='relu'),
+    layers.Dense(10, activation='softmax')
+])
+
+# Derle
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+# Eğit
+model.fit(x_train, y_train, epochs=5)
+
+# Test et
+test_loss, test_acc = model.evaluate(x_test, y_test)
+print(f"Test doğruluk: {test_acc:.2f}")
+
+# Tahmin görselleştirme
+plt.imshow(x_test[0], cmap='gray')
+plt.title(f"Tahmin: {model.predict(x_test[0:1]).argmax()}")
+plt.show()
